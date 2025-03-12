@@ -17,11 +17,10 @@ from logging.handlers import RotatingFileHandler
 import traceback
 from datetime import datetime
 
-# Configuration
 API_ID = int(os.getenv('API_ID'))
 API_HASH = os.getenv('API_HASH')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-REDIS_URL = os.getenv('REDIS_URL')
+REDIS_URL = os.getenv('REDIS_URL') # rediss://:yourpassword@your-redis-host:6379/0
 ADMIN_IDS = [int(id) for id in os.getenv('ADMIN_IDS', '').split(',') if id]
 MAX_ATTACHMENT_SIZE = 20 * 1024 * 1024  # 20MB
 LOG_FILE = 'email_bot.log'
@@ -59,7 +58,6 @@ def setup_encryption():
 
 cipher_suite = setup_encryption()
 
-# Redis Keys
 def user_key(user_id):
     return f'user:{user_id}:email_config'
 
@@ -69,7 +67,6 @@ def temp_data_key(user_id):
 def stats_key():
     return 'bot:stats'
 
-# Encryption functions
 def encrypt_data(data):
     try:
         return cipher_suite.encrypt(data.encode()).decode()
@@ -123,7 +120,6 @@ async def track_stat(metric):
     except Exception as e:
         logger.error(f"Stat tracking error: {str(e)}")
 
-# Email Functions
 async def send_email(user_id, to, subject, body, attachments=None):
     config = await get_user_config(user_id)
     if not config or not config.get('smtp_server'):
@@ -208,7 +204,6 @@ async def users_handler(event):
     except Exception as e:
         await handle_error(event, f"Users stats error: {str(e)}")
 
-# Start bot
 if __name__ == '__main__':
     try:
         logger.info("Starting Email Bot...")
