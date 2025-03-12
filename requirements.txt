@@ -1,0 +1,5 @@
+telethon
+redis
+cryptography
+html2text
+python-dotenv
